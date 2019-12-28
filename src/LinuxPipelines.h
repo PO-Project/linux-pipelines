@@ -50,6 +50,27 @@ public:
             ctrl.remove();
         },
                         "");
+                        newBackend.bind("list", [this]() {
+            ctrl.list();
+        },
+                        "");
+                        newBackend.bind("save", [this]() {
+            ctrl.save(getEntry("ARG"));
+        },
+                        "");
+                        newBackend.bind("open", [this]() {
+            ctrl.open(getEntry("ARG"));
+        },
+                        "");
+                        newBackend.bind("export", [this]() {
+            ctrl.exportSh(getEntry("ARG"));
+        },
+                        "");
+                        newBackend.bind("file", [this]() {
+            ctrl.file();
+        },
+                        "");
+    
     }
 
 private:

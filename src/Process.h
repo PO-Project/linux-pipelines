@@ -13,44 +13,82 @@ public:
         in = nullptr;
         out = nullptr;
         err = nullptr;
+        setContent("echo \"Hello world!\"");
     }
-    ~Process()
+    virtual ~Process()
     {
         resetIn();
         resetOut();
         resetErr();
     }
-    void pipeOut(Process &process)
+    virtual void pipeOut(Process &process)
     {
         resetOut();
-        if (process.in)
-            process.resetIn();
         outArrow = std::make_unique<Arrow>(getPosition(), process.getPosition() + Point{0, 2}, [this]() {
             resetOut();
         });
         out = &process;
-        process.in = this;
+        process.pipeIn(*this);
     }
-    void pipeErr(Process &process)
+    virtual void pipeErr(Process &process)
     {
         resetErr();
-        if (process.in)
-            process.resetIn();
         errArrow = std::make_unique<Arrow>(getPosition() + Point{0, 1}, process.getPosition() + Point{0, 2}, [this]() {
             resetErr();
         });
         err = &process;
-        process.in = this;
+        process.pipeIn(*this);
     }
-
-private:
-    void draw(Renderer &renderer) const override
+    Process *getErr() const
     {
-        if (outArrow)
-            renderer.draw(*outArrow);
-        if (errArrow)
-            renderer.draw(*errArrow);
-        Box::draw(renderer);
+        return err;
+    }
+    Process *getOut() const
+    {
+        return out;
+    }
+    Process *getIn() const
+    {
+        return in;
+    }
+    std::string pipeNameIn() const
+    {
+        std::string ret;
+        if (in)
+        {
+            if (in->getOut() == this)
+                ret = in->getOut()->getContent() + std::to_string(in->getOut()->getIndex()) + "OutTo";
+            if (in->getErr() == this)
+                ret = in->getErr()->getContent() + std::to_string(in->getErr()->getIndex()) + "ErrTo";
+            ret += getContent() + std::to_string(getIndex()) + "In";
+
+            ret.erase(std::remove_if(ret.begin(), ret.end(), [](auto c) {
+                          return !std::isalnum(c);
+                      }),
+                      ret.end());
+            ret += ".linuxPipelinesPipe";
+        }
+
+        return ret;
+    }
+    std::string pipeNameOut() const
+    {
+        if (out)
+            return out->pipeNameIn();
+        return "";
+    }
+    std::string pipeNameErr() const
+    {
+        if (out)
+            return out->pipeNameErr();
+        return "";
+    }
+    protected:
+    virtual void pipeIn(Process &process)
+    {
+        if (in)
+            resetIn();
+        in = &process;
     }
     void resetIn()
     {
@@ -84,6 +122,16 @@ private:
             errArrow.reset();
             err = nullptr;
         }
+    }
+
+private:
+    void draw(Renderer &renderer) const override
+    {
+        if (outArrow)
+            renderer.draw(*outArrow);
+        if (errArrow)
+            renderer.draw(*errArrow);
+        Box::draw(renderer);
     }
     std::unique_ptr<Arrow> outArrow, errArrow;
     Process *in, *out, *err;

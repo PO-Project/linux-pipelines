@@ -12,7 +12,11 @@ public:
     {
         drawable.draw(*this);
     }
-    virtual void drawString(Point position, const std::string &str) = 0;
+    virtual void drawString(const std::string &str, Point position) = 0;
+    void drawString(const std::string &str)
+    {
+        drawString(str, center);
+    }
     virtual void setCoordinates(int width, int height, int startx, int starty) = 0;
     virtual void clear() = 0;
     virtual void attributeOn(unsigned long attribute) = 0;
@@ -21,6 +25,7 @@ public:
     {
         center = newCenter;
     }
+    virtual void forceUpdate() = 0;
 
 protected:
     Point center = {0, 0};

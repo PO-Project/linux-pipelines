@@ -7,6 +7,13 @@
 #include <algorithm>
 #include "Drawable.h"
 
+enum class GroupMode
+{
+    TEXT,
+    GRAPH,
+};
+
+template <GroupMode group>
 class Traversable : public Drawable
 {
 public:
@@ -36,6 +43,14 @@ public:
         }
         traversablesX.erase(myItX);
         traversablesY.erase(myItY);
+    } 
+    bool operator<(const Traversable &rhs) const
+    {
+        return getAveragePosition().y < rhs.getAveragePosition().y;
+    }
+    bool operator>(const Traversable &rhs) const
+    {
+        return getAveragePosition().y > rhs.getAveragePosition().y;
     }
     static void nextX()
     {
@@ -119,9 +134,9 @@ public:
 private:
     bool selected;
 
-    inline static std::list<std::reference_wrapper<Traversable>> traversablesX, traversablesY;
-    inline static std::list<std::reference_wrapper<Traversable>>::iterator itX, itY;
-    std::list<std::reference_wrapper<Traversable>>::iterator myItX, myItY;
+    inline static typename std::list<std::reference_wrapper<Traversable>> traversablesX, traversablesY;
+    inline static typename std::list<std::reference_wrapper<Traversable>>::iterator itX, itY;
+    typename std::list<std::reference_wrapper<Traversable>>::iterator myItX, myItY;
 };
 
 #endif /* !TRAVERSABLE_H_ */

@@ -8,7 +8,7 @@
 #include "Traversable.h"
 #include "Renderer.h"
 
-class Arrow : public Traversable
+class Arrow : public Traversable<GroupMode::GRAPH>
 {
 public:
     Arrow(Point newBegin, Point newEnd, std::function<void()> newRemover) : begin(newBegin), end(newEnd), remover(newRemover)
@@ -53,10 +53,12 @@ private:
     {
         if (isSelected())
             renderer.attributeOn(A_REVERSE);
-        renderer.drawString({pos.x, begin.y}, "+" + std::string(size.x - 2, '-') + "<");
-        renderer.drawString({pos.x, end.y}, "+" + std::string(size.x - 2, '-') + ">");
+        renderer.drawString("+" + std::string(size.x - 2, '-') + "<", {pos.x, begin.y});
+        renderer.drawString("+" + std::string(size.x - 2, '-') + ">", {pos.x, end.y});
         for (int i = std::min(begin.y, end.y) + 1; i < std::max(begin.y, end.y); i++)
-            renderer.drawString({pos.x, i}, "|");
+            renderer.drawString("|", {pos.x, i});
+        renderer.drawString("+" + std::string(size.x - 2, '-') + ">", {pos.x, end.y});
+        renderer.drawString("+" + std::string(size.x - 2, '-') + "<", {pos.x, begin.y});
         if (isSelected())
             renderer.attributeOff(A_REVERSE);
     }

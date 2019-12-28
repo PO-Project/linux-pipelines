@@ -1,4 +1,7 @@
 ex
+*.txt
+*.sh
+
 # Created by https://www.gitignore.io/api/cmake,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=cmake,visualstudiocode
 

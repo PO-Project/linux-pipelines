@@ -1,16 +1,33 @@
-#ifndef BOX_H_
-#define BOX_H_
+#ifndef TEXT_H_
+#define TEXT_H_
 
 #include <queue>
 #include <iostream>
+#include <sstream>
 #include <ncurses.h>
 #include "Traversable.h"
 #include "Renderer.h"
 
-class Box : public Traversable<GroupMode::GRAPH>
+class Text : public Traversable<GroupMode::TEXT>
 {
 public:
-    Box() : size({3, 3}), content("  ")
+    template <class Emplacable>
+    static void emplaceTexts(Emplacable &container, const std::string &text)
+    {
+        int maxWidth = 0;
+        std::string str;
+        std::istringstream stream(text);
+        while (std::getline(stream, str, '\n'))
+        {
+            container.emplace(container.end(), str);
+            maxWidth = std::max(maxWidth, static_cast<int>(str.size()));
+        }
+        for (Text &text : container)
+        {
+            text.size.x = maxWidth;
+        }
+    }
+    Text(const std::string &str) : size({static_cast<int>(str.size()), 1}), content(str)
     {
         if (freeIndexes.empty())
             index = maxIndex++;
@@ -20,11 +37,11 @@ public:
             freeIndexes.pop();
         }
         pos.x = 0;
-        pos.y = index * 4;
+        pos.y = index;
     }
-    Box(const Box &) = delete;
-    Box(Box &&) = delete;
-    virtual ~Box()
+    Text(const Text &) = delete;
+    Text(Text &&) = delete;
+    virtual ~Text()
     {
         freeIndexes.push(index);
     }
@@ -39,19 +56,15 @@ public:
     void setContent(const std::string &newContent)
     {
         content = newContent;
-        size.x = content.size() + 2;
+        size.x = content.size();
     }
-    std::string getContent() const
+    std::string getContent()
     {
         return content;
     }
-    bool operator==(const Box &rhs) const
+    bool operator==(const Text &rhs) const
     {
         return index == rhs.index;
-    }
-    int getIndex() const
-    {
-        return index;
     }
 
 protected:
@@ -59,9 +72,7 @@ protected:
     {
         if (isSelected())
             renderer.attributeOn(A_REVERSE);
-        renderer.drawString("+" + std::string(size.x, '-') + "+", pos);
-        renderer.drawString("| " + content + " |", pos + Point{0, 1});
-        renderer.drawString("+" + std::string(size.x, '-') + "+", pos + Point{0, 2});
+        renderer.drawString(content, pos);
         if (isSelected())
             renderer.attributeOff(A_REVERSE);
     }
@@ -74,4 +85,4 @@ private:
     inline static int maxIndex = 0;
 };
 
-#endif /* !BOX_H_ */
+#endif /* !TEXT_H_ */

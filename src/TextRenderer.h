@@ -8,6 +8,7 @@
 class TextRenderer : public Renderer
 {
 public:
+    using Renderer::drawString;
     ~TextRenderer()
     {
         if (window != nullptr)
@@ -27,7 +28,7 @@ public:
         window = newwin(width, height, startx, starty);
         panel = new_panel(window);
     }
-    void drawString(Point position, const std::string &str) override
+    void drawString(const std::string &str, Point position) override
     {
         Point max, halfMax;
         getmaxyx(window, max.y, max.x);
@@ -53,6 +54,11 @@ public:
     void attributeOff(unsigned long attribute) override
     {
         wattroff(window, attribute);
+    }
+    void forceUpdate() override
+    {
+        update_panels();
+        doupdate();
     }
 
 private:
