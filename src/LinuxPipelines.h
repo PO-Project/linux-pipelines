@@ -2,8 +2,8 @@
 #define LINUXPIPELINES_H_
 
 #include <map>
-#include "../common-interface/ToolBase.hpp"
-#include "../common-interface/BackendBase.hpp"
+#include "ToolBase.hpp"
+#include "BackendBase.hpp"
 #include "Controller.h"
 
 namespace tools
@@ -50,27 +50,26 @@ public:
             ctrl.remove();
         },
                         "");
-                        newBackend.bind("list", [this]() {
+        newBackend.bind("list", [this]() {
             ctrl.list();
         },
                         "");
-                        newBackend.bind("save", [this]() {
+        newBackend.bind("save", [this]() {
             ctrl.save(getEntry("ARG"));
         },
                         "");
-                        newBackend.bind("open", [this]() {
+        newBackend.bind("open", [this]() {
             ctrl.open(getEntry("ARG"));
         },
                         "");
-                        newBackend.bind("export", [this]() {
+        newBackend.bind("export", [this]() {
             ctrl.exportSh(getEntry("ARG"));
         },
                         "");
-                        newBackend.bind("file", [this]() {
+        newBackend.bind("file", [this]() {
             ctrl.file();
         },
                         "");
-    
     }
 
 private:

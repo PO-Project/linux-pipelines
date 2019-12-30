@@ -1,5 +1,6 @@
+linux-pipelines
 ex
-*.txt
+example/*.txt
 *.sh
 
 # Created by https://www.gitignore.io/api/cmake,visualstudiocode
