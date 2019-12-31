@@ -143,6 +143,29 @@ public:
             }
         }
     }
+    void swap()
+    {
+        if (activeGroup == GroupMode::GRAPH)
+        {
+            if (dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()))
+            {
+                if (tempSwapBegin)
+                {
+                    Process::swap(*tempSwapBegin, *dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()));
+                    tempSwapBegin = nullptr;
+                }
+                else
+                {
+                    tempSwapBegin = dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get());
+                }
+                render();
+            }
+            else
+                message("You must select process to swap.");
+        }
+        else
+            message("You can swap processes only in graph edition mode.");
+    }
     void remove()
     {
         if (activeGroup == GroupMode::GRAPH)
@@ -239,7 +262,7 @@ public:
             render();
         }
     }
-    void save(const std::string& filename)
+    void save(const std::string &filename)
     {
         std::ofstream file(filename);
         processes.sort();
@@ -270,7 +293,7 @@ public:
                 file << "-1\n";
         }
     }
-    void open(const std::string& filename)
+    void open(const std::string &filename)
     {
         std::ifstream file(filename);
         processes.clear();
@@ -327,7 +350,7 @@ public:
         }
         render();
     }
-    void exportSh(const std::string& filename)
+    void exportSh(const std::string &filename)
     {
         std::ofstream file(filename);
         for (const auto &process : processes)
@@ -386,6 +409,7 @@ private:
     void clearTemp()
     {
         tempPipeBegin = nullptr;
+        tempSwapBegin = nullptr;
         tempPipeBeginDesc = 'n';
     }
     void initText()
@@ -426,6 +450,7 @@ private:
     std::list<std::unique_ptr<Process>> processes;
     std::list<Text> texts;
     Process *tempPipeBegin = nullptr;
+    Process *tempSwapBegin = nullptr;
     char tempPipeBeginDesc = 'n';
     TextRenderer renderer;
 };

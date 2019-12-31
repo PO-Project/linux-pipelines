@@ -53,6 +53,11 @@ public:
     {
         return index;
     }
+    static void swap(Box &a, Box &b)
+    {
+        std::swap(a.index, b.index);
+        std::swap(a.pos, b.pos);
+    }
 
 protected:
     void draw(Renderer &renderer) const override

@@ -3,12 +3,8 @@
 ## Kompilacja przykładu
 
 ```
-g++ -Wall -Wextra -pedantic main.cpp -o ex -lncurses -lpanel -lstdc++fs -std=c++17
+cmake . ; cmake --build . --config Release
 ```
-
-_- Dlaczego nie `cmake`?_
-
-_- Hmm, sam nie wiem._
 
 ## Specyfikacja bindowanych komend
 
@@ -18,13 +14,15 @@ _- Hmm, sam nie wiem._
 - `:process<ENTER>`
   
   Tworzy nowy proces (prostokąt)
-
 - `:file<ENTER>`
   
   Tworzy nowy plik (też prostokąt)
 - `:pipe ${ARG}<ENTER>` (przyjmuje `ARG`)
   
   Zaczyna (gdy _ARG ∈ {1, 2, stdin, stderr}_) lub kończy (gdy _ARG = ""_) tworzenie pipe'a (strzałki)
+- `:swap<ENTER>`
+  
+  Zaczyna i kończy zamianę dwóch procesów lub plików.
 - `:edit ${ARG}<ENTER>` (przyjmuje `ARG`)
   
   Edytuje komendę wywołania procesu lub nazwy pliku (tekst w prostokącie)
@@ -57,14 +55,29 @@ _Uwaga, ta specyfikacja może się zmieniać._
 - `save` (przyjmuje `ARG`)
 - `open` (przyjmuje `ARG`)
 - `export` (przyjmuje `ARG`)
+- `swap`
+- `#vim#navigate!EDIT` _czekam na `<ENTER>`_
+- `pipe1` _czekam na `${ARG}`_
+- `pipe2` _czekam na `${ARG}`_
 
 _Z tego, co wiem, nie ma jeszcze backendu, który parsowałby komendy z `${...}`, a ten przykładowy nie rozpoznaje `:` i `<ENTER>`._
 
 (_swoją drogą, jak robimy informacje o błędach? przez jakieś `ERROR`, czy każdy po swojemu?_)
 
+## Integracja z `vim-backend`
+
+### Co działa:
+
+- `process`, `remove`, `list`, `swap`
+
+### Co nie działa
+
+- nawigacja strzałkami `<LARROW>`, `<UARROW>`
+- cokolwiek co wymaga nawigacji
+- cokolwiek co przyjmuje argument
+
 ## TODO
 
-- `:swap<ENTER>`
-- Integracja z backendami
+- Integracja z pozostałymi backendami
 - Testy?
 - Dokumentacja kodu i tysiąc innych bajek do opowiadania przed snem...

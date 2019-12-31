@@ -15,18 +15,18 @@ if (NOT CURSES_PANEL_LIBRARY)
 endif ()
 
 
-add_executable(linux-pipelines
-    src/main.cpp
+add_executable(vim-linux-pipelines
+    src/vim-main.cpp
 )
 
-add_executable(ex
+add_executable(example-linux-pipelines
     example/main.cpp
 )
 
 add_subdirectory(backends/vim-backend)
 
-target_include_directories(linux-pipelines PRIVATE common-interface ${CURSES_INCLUDE_DIRS} /usr/include/ncurses)
-target_link_libraries(linux-pipelines stdc++fs VimBackend ${CURSES_LIBRARIES} ${CURSES_PANEL_LIBRARY})
+target_include_directories(vim-linux-pipelines PRIVATE common-interface ${CURSES_INCLUDE_DIRS} /usr/include/ncurses)
+target_link_libraries(vim-linux-pipelines stdc++fs VimBackend ${CURSES_LIBRARIES} ${CURSES_PANEL_LIBRARY})
 
-target_include_directories(ex PRIVATE common-interface src ${CURSES_INCLUDE_DIRS} /usr/include/ncurses)
-target_link_libraries(ex stdc++fs ${CURSES_LIBRARIES} ${CURSES_PANEL_LIBRARY})
+target_include_directories(example-linux-pipelines PRIVATE common-interface src ${CURSES_INCLUDE_DIRS} /usr/include/ncurses)
+target_link_libraries(example-linux-pipelines stdc++fs ${CURSES_LIBRARIES} ${CURSES_PANEL_LIBRARY})

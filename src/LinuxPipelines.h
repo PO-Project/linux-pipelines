@@ -70,6 +70,20 @@ public:
             ctrl.file();
         },
                         "");
+        newBackend.bind("swap", [this]() {
+            ctrl.swap();
+        },
+                        "");
+
+        newBackend.bind("#vim#navigate!EDIT", [this]() {}, "");
+        newBackend.bind("pipe1", [this]() {
+            ctrl.pipe("1");
+        },
+                        "");
+        newBackend.bind("pipe2", [this]() {
+            ctrl.pipe("2");
+        },
+                        "");
     }
 
 private:

@@ -83,7 +83,14 @@ public:
             return out->pipeNameErr();
         return "";
     }
-    protected:
+    static void swap(Process &a, Process &b)
+    {
+        Box::swap(a, b);
+        a.refreshPipes();
+        b.refreshPipes();
+    }
+
+protected:
     virtual void pipeIn(Process &process)
     {
         if (in)
@@ -125,6 +132,15 @@ public:
     }
 
 private:
+    void refreshPipes(bool recursive = true)
+    {
+        if (out)
+            pipeOut(*out);
+        if (err)
+            pipeErr(*err);
+        if (in && recursive)
+            in->refreshPipes();
+    }
     void draw(Renderer &renderer) const override
     {
         if (outArrow)
