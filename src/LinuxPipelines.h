@@ -30,64 +30,100 @@ public:
     void setBackend(backends::BackendBase &newBackend) override
     {
         ToolBase::setBackend(newBackend);
-        newBackend.bind("<EDITION>", [this]() {
+
+        setEntry("IS_SAVED", "YES");
+
+        auto bindHelper = [this, &newBackend](const std::string &command, std::function<void()> callback, const std::string &helpMessage) {
+            newBackend.bind(command, [this, callback]() {
+                callback();
+                if (ctrl.getDirty())
+                    setEntry("IS_SAVED", "NO");
+                else
+                    setEntry("IS_SAVED", "YES");
+            },
+                            helpMessage);
+        };
+        for (const auto &key : {"<UARROW>", "<DARROW>", "<RARROW>", "<LARROW>"})
+        {
+            newBackend.bind(key, [this, key]() {
+                ctrl.processKEY(key);
+                if (ctrl.getDirty())
+                    setEntry("IS_SAVED", "NO");
+                else
+                    setEntry("IS_SAVED", "YES");
+            },
+                            "");
+        }
+        bindHelper("<EDITION>", [this]() {
             ctrl.processKEY(getEntry("KEY"));
         },
-                        "");
-        newBackend.bind("process", [this]() {
-            ctrl.process();
+                   "");
+        bindHelper(":process ${ARG}", [this]() {
+            ctrl.process(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("pipe", [this]() {
-            ctrl.pipe(getEntry("ARG"));
-        },
-                        "");
-        newBackend.bind("edit", [this]() {
+                   "");
+        bindHelper(":quickedit ${ARG}", [this]() {
             ctrl.edit(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("remove", [this]() {
+                   "");
+        bindHelper(":remove", [this]() {
             ctrl.remove();
         },
-                        "");
-        newBackend.bind("list", [this]() {
+                   "");
+        bindHelper("<DEL>", [this]() {
+            ctrl.remove();
+        },
+                   "");
+        bindHelper(":list", [this]() {
             ctrl.list();
         },
-                        "");
-        newBackend.bind("save", [this]() {
+                   "");
+        bindHelper(":insert", [this]() {
+            ctrl.list();
+        },
+                   "");
+        bindHelper(":save ${ARG}", [this]() {
             ctrl.save(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("open", [this]() {
+                   "");
+        bindHelper(":open ${ARG}", [this]() {
             ctrl.open(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("export", [this]() {
+                   "");
+        bindHelper(":export ${ARG}", [this]() {
             ctrl.exportSh(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("file", [this]() {
-            ctrl.file();
+                   "");
+        bindHelper(":file ${ARG}", [this]() {
+            ctrl.file(getEntry("ARG"));
         },
-                        "");
-        newBackend.bind("swap", [this]() {
+                   "");
+        bindHelper(":swap", [this]() {
             ctrl.swap();
         },
-                        "");
-
-        newBackend.bind("#vim#navigate!EDIT", [this]() {}, "");
-        newBackend.bind("pipe1", [this]() {
-            ctrl.pipe("1");
+                   "");
+        bindHelper(":pipeout", [this]() {
+            ctrl.pipe("STDOUT");
         },
-                        "");
-        newBackend.bind("pipe2", [this]() {
-            ctrl.pipe("2");
+                   "");
+        bindHelper(":pipeerr", [this]() {
+            ctrl.pipe("STDERR");
         },
-                        "");
+                   "");
+        bindHelper(":pipe", [this]() {
+            ctrl.pipe("");
+        },
+                   "");
+        bindHelper("#vim#:edit!EDIT", [this]() {}, "");
+        bindHelper("o", [this]() {
+            ctrl.goToGraph();
+        },
+                   "");
     }
 
 private:
-    std::map<std::string, std::string> entries;
+    std::map<std::string, std::string>
+        entries;
     std::string text;
     Controller ctrl;
 };

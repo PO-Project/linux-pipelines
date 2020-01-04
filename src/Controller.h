@@ -76,6 +76,7 @@ public:
             if (dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()))
             {
                 dynamic_cast<Process &>(*Traversable<GroupMode::GRAPH>::get()).setContent(str);
+                setDirty();
                 render();
             }
             else
@@ -83,34 +84,43 @@ public:
         }
         else
             message("You can edit processes only in graph edition mode.");
-        //TODO inform about error
     }
-    void process()
+    void process(const std::string &content)
     {
         if (activeGroup == GroupMode::GRAPH)
         {
             processes.emplace_back(new Process);
+            processes.back()->setContent(content);
+            setDirty();
             render();
         }
-        else if (activeGroup == GroupMode::TEXT && activePathList && dynamic_cast<Text *>(Traversable<GroupMode::TEXT>::get()))
+            message("You can add processes only in graph edition mode.");
+    }
+    void insert()
+    {
+        if (activeGroup == GroupMode::TEXT && activePathList && dynamic_cast<Text *>(Traversable<GroupMode::TEXT>::get()))
         {
             processes.emplace_back(new Process);
             processes.back()->setContent(dynamic_cast<Text &>(*Traversable<GroupMode::TEXT>::get()).getContent());
+            setDirty();
         }
         else
-            message("You can add processes only in graph edition mode or after 'list' command'.");
+            message("You can add processes after 'list' command'.");
     }
-    void file()
+    void file(const std::string &content)
     {
         if (activeGroup == GroupMode::GRAPH)
         {
             processes.emplace_back(new File);
+            processes.back()->setContent(content);
+            setDirty();
             render();
         }
         else if (activeGroup == GroupMode::TEXT && activePathList && dynamic_cast<Text *>(Traversable<GroupMode::TEXT>::get()))
         {
             processes.emplace_back(new File);
             processes.back()->setContent(dynamic_cast<Text &>(*Traversable<GroupMode::TEXT>::get()).getContent());
+            setDirty();
         }
         else
             message("You can add processes only in graph edition mode or after 'list' command'.");
@@ -138,6 +148,7 @@ public:
                     tempPipeBegin->pipeOut(dynamic_cast<Process &>(*Traversable<GroupMode::GRAPH>::get()));
                 else if (tempPipeBeginDesc == 'e')
                     tempPipeBegin->pipeErr(dynamic_cast<Process &>(*Traversable<GroupMode::GRAPH>::get()));
+                setDirty();
                 clearTemp();
                 render();
             }
@@ -176,12 +187,14 @@ public:
                     return *p.get() == dynamic_cast<Process &>(*Traversable<GroupMode::GRAPH>::get());
                 });
                 processes.erase(it);
+                setDirty();
                 clearTemp();
                 render();
             }
             else if (dynamic_cast<Arrow *>(Traversable<GroupMode::GRAPH>::get()))
             {
                 dynamic_cast<Arrow &>(*Traversable<GroupMode::GRAPH>::get()).remove();
+                setDirty();
                 render();
             }
             else
@@ -189,6 +202,12 @@ public:
         }
         else
             message("You can remove processes and pipes only in graph edition mode.");
+    }
+    void goToGraph()
+    {
+        activeGroup = GroupMode::GRAPH;
+        activePathList = false;
+        render();
     }
     void processKEY(const std::string &key)
     {
@@ -202,10 +221,22 @@ public:
             left();
         else
         {
-            if (key == "<DEL>")
-                remove();
-            activeGroup = GroupMode::GRAPH;
-            activePathList = false;
+            if (activeGroup == GroupMode::GRAPH)
+            {
+                if (dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()))
+                {
+                    Process *p = dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get());
+                    if (key == "<DEL>")
+                        p->setContent(p->getContent().substr(0, std::max(0ull, p->getContent().size() - 1ull)));
+                    else if (key.size() == 1)
+                        p->setContent(p->getContent() + key);
+                    setDirty();
+                }
+                else
+                    message("You must select process or file to edit.");
+            }
+            else if (key == "o")
+                goToGraph();
         }
         render();
     }
@@ -292,6 +323,7 @@ public:
             else
                 file << "-1\n";
         }
+        setDirty(false);
     }
     void open(const std::string &filename)
     {
@@ -324,6 +356,7 @@ public:
                     errPipes.push_back({n, e});
                 n++;
             }
+            setDirty(false);
         }
         catch (...)
         {
@@ -384,8 +417,16 @@ public:
         file << "for pid in ${pids[*]}; do\n\twait $pid\ndone\n";
         file << "rm /tmp/*.linuxPipelinesPipe 2> /dev/null\n";
     }
+    bool getDirty()
+    {
+        return isDirty;
+    }
 
 private:
+    void setDirty(bool newDirty = true)
+    {
+        isDirty = newDirty;
+    }
     void render()
     {
         renderer.clear();
@@ -421,7 +462,7 @@ private:
     void loadingAnimation()
     {
         constexpr int dots = 4;
-        constexpr int waitTime = 1000;
+        constexpr int waitTime = 500;
         static short c = 0;
         static std::string s = "Loading ";
         c++;
@@ -442,7 +483,7 @@ private:
     void message(const std::string &str)
     {
         initText();
-        Text::emplaceTexts(texts, str + "\nPress any non arrow key to continue ...");
+        Text::emplaceTexts(texts, str + "\nPress 'o' key to continue ...");
         render();
     }
     GroupMode activeGroup = GroupMode::GRAPH;
@@ -453,6 +494,7 @@ private:
     Process *tempSwapBegin = nullptr;
     char tempPipeBeginDesc = 'n';
     TextRenderer renderer;
+    bool isDirty = false;
 };
 
 #endif /* !CONTROLLER_H_ */

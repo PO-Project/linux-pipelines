@@ -1,66 +1,108 @@
 # Linux Pipelines
 
-## Kompilacja przykładu
+## Kompilacja
+
+Klonowanie:
+
+```
+git clone --recursive https://github.com/PO-Project/linux-pipelines
+```
+
+Uaktualnianie submodułów gita:
+
+```
+git submodule update --recursive --remote
+```
+
+Kompilacja:
 
 ```
 cmake . ; cmake --build . --config Release
+```
+
+_CMake nie lubi mieć wszystkiego w plikach `*.h` , może się przydać poniższa komenda:_
+
+```
+find . -name '*.o' -delete
 ```
 
 ## Specyfikacja bindowanych komend
 
 - `<EDITION>` (przyjmuje `KEY`)
   
-  Obsługuje klawisze strzałek (nawigacja) i `<DEL>` (usuwanie wybranego obiektu)
-- `:process<ENTER>`
+  Obsługuje klawisze strzałek (nawigacja), `<DEL>` (wymazywanie) i normalne znaki (edycja tekstu)
+
+- `<UARROW>`, `<DARROW>`, `<RARROW>`, `<LARROW>`
+
+  Obsługuje klawisze strzałek (nawigacja)
+
+- `:process ${ARG}`
   
-  Tworzy nowy proces (prostokąt)
-- `:file<ENTER>`
+  Tworzy nowy proces (prostokąt z tekstem)
+
+- `:file ${ARG}`
   
-  Tworzy nowy plik (też prostokąt)
-- `:pipe ${ARG}<ENTER>` (przyjmuje `ARG`)
+  Tworzy nowy plik (też prostokąt z tekstem)
+
+- `:pipeout`
   
-  Zaczyna (gdy _ARG ∈ {1, 2, stdin, stderr}_) lub kończy (gdy _ARG = ""_) tworzenie pipe'a (strzałki)
-- `:swap<ENTER>`
+  Zaczyna tworzenie pipe'a (strzałki) wychodzącego z _stdout_ wybranego elementu.
+
+- `:pipeerr`
   
-  Zaczyna i kończy zamianę dwóch procesów lub plików.
-- `:edit ${ARG}<ENTER>` (przyjmuje `ARG`)
+  Zaczyna tworzenie pipe'a (strzałki) wychodzącego z _stderr_ wybranego elementu.
+
+- `:pipe`
+  
+  Kończy tworzenie pipe'a (strzałki) wchodzącego do wybranego elementu.
+
+- `:swap`
+  
+  Zaczyna i kończy zamianę dwóch procesów lub plików (kolene wywołania dla dwóch elementów).
+
+- `:quickedit ${ARG}`
   
   Edytuje komendę wywołania procesu lub nazwy pliku (tekst w prostokącie)
-- `:remove<ENTER>`
+
+- `:remove`, `<DEL>`
   
   Usuwa wybrany obiekt
-- `:list<ENTER>`
+
+- `:list`
   
   Wypisuje listę plików binarnych w `PATH` i plików w _cwd_
-- `:save ${FILENAME}<ENTER>` (uwaga, aktualnie `${ARG}`)
+
+- `:insert`
+
+  Wstawia element z listy
+
+- `:save ${ARG}`
   
   Zapisuje plik "projektu programu Linux Pipelines"
-- `:open ${FILENAME}<ENTER>` (uwaga, aktualnie `${ARG}`)
+
+- `:open ${ARG}`
   
   Otwiera plik "projektu programu Linux Pipelines"
-- `:export ${SCRIPTNAME}<ENTER>` (uwaga, aktualnie `${ARG}`)
+
+- `:export ${ARG}`
   
-  Eksportuje plik "projektu programu Linux Pipelines" do bashowego skryptu 
+  Eksportuje "projekt programu Linux Pipelines" do bashowego skryptu
+
+- `#vim#:edit!EDIT`
+
+  Tryb edycji
+
+- `o`
+
+  Akceptuje komunikat
 
 _Uwaga, ta specyfikacja może się zmieniać._
 
 ## Co naprawdę jest aktualnie bindowane
 
-- `<EDITION>`
-- `process`
-- `pipe` (przyjmuje `ARG`)
-- `edit` (przyjmuje `ARG`)
-- `remove`
-- `list`
-- `save` (przyjmuje `ARG`)
-- `open` (przyjmuje `ARG`)
-- `export` (przyjmuje `ARG`)
-- `swap`
-- `#vim#navigate!EDIT` _czekam na `<ENTER>`_
-- `pipe1` _czekam na `${ARG}`_
-- `pipe2` _czekam na `${ARG}`_
+**To co powyżej**
 
-_Z tego, co wiem, nie ma jeszcze backendu, który parsowałby komendy z `${...}`, a ten przykładowy nie rozpoznaje `:` i `<ENTER>`._
+_**Uwaga** `example-linux-pipelines` nie wspiera aktualnie bindowanych komend._
 
 (_swoją drogą, jak robimy informacje o błędach? przez jakieś `ERROR`, czy każdy po swojemu?_)
 
@@ -68,16 +110,15 @@ _Z tego, co wiem, nie ma jeszcze backendu, który parsowałby komendy z `${...}`
 
 ### Co działa:
 
-- `process`, `remove`, `list`, `swap`
+- Wszystko oprócz obsługi _<*ARROW>_
 
 ### Co nie działa
 
-- nawigacja strzałkami `<LARROW>`, `<UARROW>`
-- cokolwiek co wymaga nawigacji
-- cokolwiek co przyjmuje argument
+- `<LARROW>`, `<UARROW>` ...
 
 ## TODO
 
+- Uzupełnienie `helpMessage`
 - Integracja z pozostałymi backendami
 - Testy?
 - Dokumentacja kodu i tysiąc innych bajek do opowiadania przed snem...
