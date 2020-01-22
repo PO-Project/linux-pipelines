@@ -94,6 +94,7 @@ public:
             setDirty();
             render();
         }
+        else
             message("You can add processes only in graph edition mode.");
     }
     void insert()
