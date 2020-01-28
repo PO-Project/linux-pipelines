@@ -52,73 +52,73 @@ public:
                 else
                     setEntry("IS_SAVED", "YES");
             },
-                            "");
+                            "navigation");
         }
         bindHelper("<EDITION>", [this]() {
             ctrl.processKEY(getEntry("KEY"));
         },
                    "");
-        bindHelper(":process ${ARG}", [this]() {
-            ctrl.process(getEntry("ARG"));
+        bindHelper(":process ${PROCESS_NAME}", [this]() {
+            ctrl.process(getEntry("PROCESS_NAME"));
         },
-                   "");
-        bindHelper(":quickedit ${ARG}", [this]() {
-            ctrl.edit(getEntry("ARG"));
+                   "add new process to graph");
+        bindHelper(":quickedit ${NEW_CONTENT}", [this]() {
+            ctrl.edit(getEntry("NEW_CONTENT"));
         },
-                   "");
+                   "edit selected entity (process or file)");
         bindHelper(":remove", [this]() {
             ctrl.remove();
         },
-                   "");
+                   "remove selected entity (process, file or pipe)");
         bindHelper("<DEL>", [this]() {
             ctrl.remove();
         },
-                   "");
+                   "remove selected entity (process, file or pipe)");
         bindHelper(":list", [this]() {
             ctrl.list();
         },
-                   "");
-        bindHelper(":insert", [this]() {
-            ctrl.list();
+                   "open list of binaries and files accesible from PATH variable");
+        bindHelper(":insert ${TYPE}", [this]() {
+            ctrl.insert(getEntry("TYPE"));
         },
-                   "");
-        bindHelper(":save ${ARG}", [this]() {
-            ctrl.save(getEntry("ARG"));
+                   "insert selected element from list (see :list) to graph, type should be equal 'process' or 'file'");
+        bindHelper(":save ${PROJECT_FILE}", [this]() {
+            ctrl.save(getEntry("PROJECT_FILE"));
         },
-                   "");
-        bindHelper(":open ${ARG}", [this]() {
-            ctrl.open(getEntry("ARG"));
+                   "save linux pipelines project file");
+        bindHelper(":open ${PROJECT_FILE}", [this]() {
+            ctrl.open(getEntry("PROJECT_FILE"));
         },
-                   "");
-        bindHelper(":export ${ARG}", [this]() {
-            ctrl.exportSh(getEntry("ARG"));
+                   "open linux pipelines project file");
+        bindHelper(":export ${SCRIPT_FILE}", [this]() {
+            ctrl.exportSh(getEntry("SCRIPT_FILE"));
         },
-                   "");
-        bindHelper(":file ${ARG}", [this]() {
-            ctrl.file(getEntry("ARG"));
+                   "export linux pipelines project to bash script file");
+        bindHelper(":file ${FILE_NAME}", [this]() {
+            ctrl.file(getEntry("FILE_NAME"));
         },
-                   "");
+                   "add new file to graph");
         bindHelper(":swap", [this]() {
             ctrl.swap();
         },
-                   "");
+                   "start or end swap operation (consecutive calls swaps consecutively selected elements)");
         bindHelper(":pipeout", [this]() {
             ctrl.pipe("STDOUT");
         },
-                   "");
+                   "start creating pipe in stdout of selected process");
         bindHelper(":pipeerr", [this]() {
             ctrl.pipe("STDERR");
         },
-                   "");
+                   "start creating pipe in stderr of selected process");
         bindHelper(":pipe", [this]() {
             ctrl.pipe("");
         },
-                   "");
-        bindHelper("#vim#:edit!EDIT", [this]() {}, "");
+                   "end creating pipe, redirect to selected entity (process or file)");
+        bindHelper("#vim#:edit!EDIT", [this]() {}, "enter edit mode");
         bindHelper("o", [this]() {
             ctrl.goToGraph();
         },
-                   "");
+                   "accept the message (ok)");
     }
 
 private:

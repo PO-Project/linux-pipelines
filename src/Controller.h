@@ -83,7 +83,7 @@ public:
                 message("You must select process to edit.");
         }
         else
-            message("You can edit processes only in graph edition mode.");
+            message("You can edit processes only in graph mode.");
     }
     void process(const std::string &content)
     {
@@ -95,18 +95,25 @@ public:
             render();
         }
         else
-            message("You can add processes only in graph edition mode.");
+            message("You can add processes only in graph mode.");
     }
-    void insert()
+    void insert(const std::string &type)
     {
         if (activeGroup == GroupMode::TEXT && activePathList && dynamic_cast<Text *>(Traversable<GroupMode::TEXT>::get()))
         {
-            processes.emplace_back(new Process);
+            if(type == "process") 
+                processes.emplace_back(new Process);
+            else if(type == "file") 
+                processes.emplace_back(new File);
+            else{
+                message("Wrong argument of insert command.");
+                return;
+            }
             processes.back()->setContent(dynamic_cast<Text &>(*Traversable<GroupMode::TEXT>::get()).getContent());
             setDirty();
         }
         else
-            message("You can add processes after 'list' command'.");
+            message("You can insert entities from list \nonly in list mode (after 'list' command)");
     }
     void file(const std::string &content)
     {
@@ -117,14 +124,8 @@ public:
             setDirty();
             render();
         }
-        else if (activeGroup == GroupMode::TEXT && activePathList && dynamic_cast<Text *>(Traversable<GroupMode::TEXT>::get()))
-        {
-            processes.emplace_back(new File);
-            processes.back()->setContent(dynamic_cast<Text &>(*Traversable<GroupMode::TEXT>::get()).getContent());
-            setDirty();
-        }
         else
-            message("You can add processes only in graph edition mode or after 'list' command'.");
+            message("You can add files only in graph mode.");
     }
     void pipe(std::string str)
     {
@@ -135,13 +136,13 @@ public:
             {
                 tempPipeBegin = dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get());
                 tempPipeBeginDesc = 'o';
-                message("New pipe starts in stdout of " + tempPipeBegin->getContent());
+                //message("New pipe starts in stdout of " + tempPipeBegin->getContent());
             }
             else if ((str == "2" || str == "STDERR") && dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()))
             {
                 tempPipeBegin = dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get());
                 tempPipeBeginDesc = 'e';
-                message("New pipe starts in stderr of " + tempPipeBegin->getContent());
+                //message("New pipe starts in stderr of " + tempPipeBegin->getContent());
             }
             else if (tempPipeBegin && dynamic_cast<Process *>(Traversable<GroupMode::GRAPH>::get()))
             {
@@ -154,6 +155,8 @@ public:
                 render();
             }
         }
+        else
+            message("You can use pipe command only in graph mode.");
     }
     void swap()
     {
@@ -286,6 +289,7 @@ public:
             }
             commands.push_back("/dev/null");
             std::sort(commands.begin(), commands.end());
+            Text::emplaceTexts(texts, "Press 'o' key to exit list mode ...");
             for (const auto &command : commands)
             {
                 loadingAnimation();

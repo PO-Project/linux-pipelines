@@ -64,6 +64,10 @@ find . -name '*.o' -delete
   
   Edytuje komendę wywołania procesu lub nazwy pliku (tekst w prostokącie)
 
+- `:edit`
+  
+  Wchodzi w tryb edycji
+
 - `:remove`, `<DEL>`
   
   Usuwa wybrany obiekt
@@ -72,7 +76,7 @@ find . -name '*.o' -delete
   
   Wypisuje listę plików binarnych w `PATH` i plików w _cwd_
 
-- `:insert`
+- `:insert ${ARG}`
 
   Wstawia element z listy
 
@@ -108,17 +112,18 @@ _**Uwaga** `example-linux-pipelines` nie wspiera aktualnie bindowanych komend._
 
 ## Integracja z `vim-backend`
 
+Działa, plik binarny to `vim-linux-pipelines`
+
 ### Co działa:
 
-- Wszystko oprócz obsługi _<*ARROW>_
+- Wszystko
 
 ### Co nie działa
 
-- `<LARROW>`, `<UARROW>` ...
+- ...
 
 ## TODO
 
-- Uzupełnienie `helpMessage`
 - Integracja z pozostałymi backendami
 - Testy?
 - Dokumentacja kodu i tysiąc innych bajek do opowiadania przed snem...
