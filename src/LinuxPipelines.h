@@ -77,11 +77,11 @@ public:
         bindHelper(":list", [this]() {
             ctrl.list();
         },
-                   "open list of binaries and files accesible from PATH variable");
+                   "open list of binaries and files accesible from PATH environmental variable");
         bindHelper(":insert ${TYPE}", [this]() {
             ctrl.insert(getEntry("TYPE"));
         },
-                   "insert selected element from list (see :list) to graph, type should be equal 'process' or 'file'");
+                   "insert selected element (process or file) from list (see :list) to graph, type should be 'process' or 'file'");
         bindHelper(":save ${PROJECT_FILE}", [this]() {
             ctrl.save(getEntry("PROJECT_FILE"));
         },

@@ -301,7 +301,9 @@ public:
     void save(const std::string &filename)
     {
         std::ofstream file(filename);
-        processes.sort();
+        processes.sort([](const auto &a, const auto &b){
+            return *a < *b;
+        });
         for (const auto &process : processes)
         {
             file << process->getContent();

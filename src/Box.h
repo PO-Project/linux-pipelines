@@ -49,6 +49,14 @@ public:
     {
         return index == rhs.index;
     }
+    bool operator<(const Box &rhs) const
+    {
+        return index < rhs.index;
+    }
+    bool operator>(const Box &rhs) const
+    {
+        return index > rhs.index;
+    }
     int getIndex() const
     {
         return index;
