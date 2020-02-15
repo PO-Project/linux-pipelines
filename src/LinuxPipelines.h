@@ -27,6 +27,7 @@ public:
     {
         ctrl.getRenderer().setCoordinates(width, height, startx, starty);
     }
+
     void setBackend(backends::BackendBase &newBackend) override
     {
         ToolBase::setBackend(newBackend);
@@ -58,67 +59,63 @@ public:
             ctrl.processKEY(getEntry("KEY"));
         },
                    "");
-        bindHelper(":process ${PROCESS_NAME}", [this]() {
-            ctrl.process(getEntry("PROCESS_NAME"));
-        },
-                   "add new process to graph");
-        bindHelper(":quickedit ${NEW_CONTENT}", [this]() {
-            ctrl.edit(getEntry("NEW_CONTENT"));
-        },
-                   "edit selected entity (process or file)");
-        bindHelper(":remove", [this]() {
-            ctrl.remove();
-        },
-                   "remove selected entity (process, file or pipe)");
-        bindHelper("<DEL>", [this]() {
-            ctrl.remove();
-        },
-                   "remove selected entity (process, file or pipe)");
-        bindHelper(":list", [this]() {
-            ctrl.list();
-        },
-                   "open list of binaries and files accesible from PATH environmental variable");
-        bindHelper(":insert ${TYPE}", [this]() {
-            ctrl.insert(getEntry("TYPE"));
-        },
-                   "insert selected element (process or file) from list (see :list) to graph, type should be 'process' or 'file'");
-        bindHelper(":save ${PROJECT_FILE}", [this]() {
-            ctrl.save(getEntry("PROJECT_FILE"));
-        },
-                   "save linux pipelines project file");
-        bindHelper(":open ${PROJECT_FILE}", [this]() {
-            ctrl.open(getEntry("PROJECT_FILE"));
-        },
-                   "open linux pipelines project file");
-        bindHelper(":export ${SCRIPT_FILE}", [this]() {
-            ctrl.exportSh(getEntry("SCRIPT_FILE"));
-        },
-                   "export linux pipelines project to bash script file");
-        bindHelper(":file ${FILE_NAME}", [this]() {
-            ctrl.file(getEntry("FILE_NAME"));
-        },
-                   "add new file to graph");
-        bindHelper(":swap", [this]() {
-            ctrl.swap();
-        },
-                   "start or end swap operation (consecutive calls swaps consecutively selected elements)");
-        bindHelper(":pipeout", [this]() {
-            ctrl.pipe("STDOUT");
-        },
-                   "start creating pipe in stdout of selected process");
-        bindHelper(":pipeerr", [this]() {
-            ctrl.pipe("STDERR");
-        },
-                   "start creating pipe in stderr of selected process");
-        bindHelper(":pipe", [this]() {
-            ctrl.pipe("");
-        },
-                   "end creating pipe, redirect to selected entity (process or file)");
+
         bindHelper("#vim#:edit!EDIT", [this]() {}, "enter edit mode");
         bindHelper("o", [this]() {
             ctrl.goToGraph();
         },
                    "accept the message (ok)");
+
+        //----------------------------------------------------------------------------------------------------------nice
+        bindHelper("#nice#.Process.New${Provide a process name:|PROCESS_NAME}", [this]() {
+            ctrl.process(getEntry("PROCESS_NAME"));
+        }, "add new process to graph");
+
+        bindHelper("#nice#.Process.Remove", [this]() {
+                       ctrl.remove();
+                   },
+                   "remove selected entity (process, file or pipe)");
+
+        bindHelper("#nice#.Process.List", [this]() {
+                       ctrl.list();
+                   },
+                   "open list of binaries and files accesible from PATH environmental variable");
+        bindHelper("#nice#.Process.Insert${Provide a type:|TYPE}", [this]() {
+                       ctrl.insert(getEntry("TYPE"));
+                   },
+                   "insert selected element (process or file) from list (see :list) to graph, type should be 'process' or 'file'");
+        bindHelper("#nice#.Process.Save${Provide a file name:|PROJECT_FILE}", [this]() {
+                       ctrl.save(getEntry("PROJECT_FILE"));
+                   },
+                   "save linux pipelines project file");
+        bindHelper("#nice#.Process.Open${Provide a file name:|PROJECT_FILE}", [this]() {
+                       ctrl.open(getEntry("PROJECT_FILE"));
+                   },
+                   "open linux pipelines project file");
+        bindHelper("#nice#.File.Export${Provide a file name:|SCRIPT_FILE}", [this]() {
+                       ctrl.exportSh(getEntry("SCRIPT_FILE"));
+                   },
+                   "export linux pipelines project to bash script file");
+        bindHelper("#nice#.File.Add${Provide a file name:|FILE_NAME}", [this]() {
+                       ctrl.file(getEntry("FILE_NAME"));
+                   },
+                   "add new file to graph");
+        bindHelper("#nice#.Edit.Swap", [this]() {
+                       ctrl.swap();
+                   },
+                   "start or end swap operation (consecutive calls swaps consecutively selected elements)");
+        bindHelper("#nice#.Edit.Pipeout", [this]() {
+                       ctrl.pipe("STDOUT");
+                   },
+                   "start creating pipe in stdout of selected process");
+        bindHelper("#nice#.Edit.Pipeerr", [this]() {
+                       ctrl.pipe("STDERR");
+                   },
+                   "start creating pipe in stderr of selected process");
+        bindHelper("#nice#.Edit.Pipe", [this]() {
+                       ctrl.pipe("");
+                   },
+                   "end creating pipe, redirect to selected entity (process or file)");
     }
 
 private:
@@ -126,6 +123,7 @@ private:
         entries;
     std::string text;
     Controller ctrl;
+
 };
 } // namespace tools
 
