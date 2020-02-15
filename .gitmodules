@@ -4,3 +4,6 @@
 [submodule "backends/vim-backend"]
 	path = backends/vim-backend
 	url = https://github.com/PO-Project/vim-backend
+[submodule "backends/backend-nice"]
+	path = backends/backend-nice
+	url = https://github.com/PO-Project/backend-nice

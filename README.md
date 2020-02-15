@@ -104,23 +104,35 @@ _Uwaga, ta specyfikacja może się zmieniać._
 
 ## Co naprawdę jest aktualnie bindowane
 
-**To co powyżej**
+Bindowania dla `vim-backend` (te co powyżej prefiksowane `#vim#`) oraz bindowania dla `backend-nice` (prefiksowane `#nice#`, nieznacznie zmienione nazwy `:save -> .File.Save`, `:process -> .Add.Process` itd.)
 
 _**Uwaga** `example-linux-pipelines` nie wspiera aktualnie bindowanych komend._
 
-(_swoją drogą, jak robimy informacje o błędach? przez jakieś `ERROR`, czy każdy po swojemu?_)
 
 ## Integracja z `vim-backend`
 
-Działa, plik binarny to `vim-linux-pipelines`
+Działa wzorowo, plik binarny to `vim-linux-pipelines`.
 
 ### Co działa:
 
 - Wszystko
 
-### Co nie działa
+## Integracja z `backend-nice`
 
-- ...
+Działa, plik binarny to `nice-linux-pipelines`.
+
+### Co działa:
+
+- Wszystko oprócz tego co nie działa
+
+### Co nie działa:
+
+- W ostatniej zakładce menu elemety nie wyświetlają się poprawnie, są zawijane do nowej lini
+
+- Wychodzenie z aplikacji przez `.File.Quit` zostawia bałagan w terminalu, prawdopodobnie środowisko `ncurses` nie jest poprawnie niszczone.
+
+- Menu po otwarciu `.File.Help` nie jest przewijane - może się nie mieścić całe na ekranie
+
 
 ## TODO
 
